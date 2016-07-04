@@ -48,7 +48,7 @@ func (c *Cache) getOrInsertBox(box *cacheBox, keys []Key) *cacheBox {
 	return c.getOrInsertBox(nextBox, keys[1:])
 }
 
-// Inserts inserts an entry in the cache following keys.
+// Insert adds an entry in the cache following keys.
 //
 // If there's already a value in the specific location it will be replaced
 // and returned as a result. If the value is new the result of Insert will

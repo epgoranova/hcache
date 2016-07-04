@@ -1,4 +1,4 @@
-// hcache is a library providing hierarchical value store.
+// Package hcache is a library providing hierarchical value store.
 //
 // New value stores are created using the New function of the
 // package, each keeping separate hierarchy of values.
