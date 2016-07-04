@@ -22,9 +22,16 @@ type Cache struct {
 
 // New creates a hierarchical cache object.
 func New() *Cache {
-	return &Cache{
-		root: newCacheBox(),
+	return &Cache{root: newCacheBox()}
+}
+
+func (c *Cache) getBox(box *cacheBox, keys []Key) *cacheBox {
+	if box == nil || len(keys) == 0 {
+		return box
 	}
+
+	nextBox := box.next[keys[0]]
+	return c.getBox(nextBox, keys[1:])
 }
 
 func (c *Cache) getOrInsertBox(box *cacheBox, keys []Key) *cacheBox {
@@ -39,34 +46,6 @@ func (c *Cache) getOrInsertBox(box *cacheBox, keys []Key) *cacheBox {
 	}
 
 	return c.getOrInsertBox(nextBox, keys[1:])
-}
-
-func (c *Cache) boxHas(box *cacheBox, keys []Key) bool {
-	if len(keys) == 0 {
-		return box.value != nil
-	}
-
-	nextBox, ok := box.next[keys[0]]
-	if !ok {
-		return false
-	}
-
-	return c.boxHas(nextBox, keys[1:])
-}
-
-func (c *Cache) boxErase(box *cacheBox, keys []Key) Value {
-	if len(keys) == 0 {
-		value := box.value
-		box.value = nil
-		return value
-	}
-
-	nextBox, ok := box.next[keys[0]]
-	if !ok {
-		return nil
-	}
-
-	return c.boxErase(nextBox, keys[1:])
 }
 
 // Inserts inserts an entry in the cache following keys.
@@ -99,12 +78,22 @@ func (c *Cache) GetOrInsert(value Value, keys ...Key) Value {
 // Has returns true if an entry is present in the cache following keys
 // and false otherwise.
 func (c *Cache) Has(keys ...Key) bool {
-	return c.boxHas(c.root, keys)
+	box := c.getBox(c.root, keys)
+
+	return box != nil && box.value != nil
 }
 
 // Erase removes an entry from the cache following keys and returns it.
 //
 // If the entry is not present in the cache Erase returns nil.
 func (c *Cache) Erase(keys ...Key) Value {
-	return c.boxErase(c.root, keys)
+	box := c.getBox(c.root, keys)
+
+	var oldValue Value
+	if box != nil {
+		oldValue = box.value
+		box.value = nil
+	}
+
+	return oldValue
 }
