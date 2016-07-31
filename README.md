@@ -25,7 +25,9 @@ func main() {
   
   // ...
   
-  d := cache.Get("important", "answer").(*data)
-  fmt.Println(d.value) // 42
+  if v, ok := cache.Get("important", "answer"); ok {
+    d := v.(*data)
+    fmt.Println(d.value) // 42
+  }
 }
 ```

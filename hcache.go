@@ -97,3 +97,14 @@ func (c *Cache) Erase(keys ...Key) Value {
 
 	return oldValue
 }
+
+// Get retrieves an entry, if present, from the cache following keys.
+func (c *Cache) Get(keys ...Key) (Value, bool) {
+	box := c.getBox(c.root, keys)
+
+	if box == nil {
+		return nil, false
+	}
+
+	return box.value, true
+}
