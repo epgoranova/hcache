@@ -90,3 +90,22 @@ func TestErasingNonPresentValue(t *testing.T) {
 		}
 	})
 }
+
+func TestGetValue(t *testing.T) {
+	testCache(func(cache *Cache) {
+		cache.GetOrInsert(42, 'a', 'b', 'c')
+		a, ok := cache.Get('a', 'b', 'c')
+		if a != 42 || !ok {
+			t.Error()
+		}
+	})
+}
+
+func TestGetNonPresentValue(t *testing.T) {
+	testCache(func(cache *Cache) {
+		a, ok := cache.Get('a', 'b', 'c')
+		if a != nil || ok {
+			t.Error()
+		}
+	})
+}
