@@ -31,3 +31,6 @@ func main() {
   }
 }
 ```
+
+---
+*By [@s2gatev](https://github.com/s2gatev), [@catiepg](https://github.com/catiepg)*
